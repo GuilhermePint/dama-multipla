@@ -1,0 +1,71 @@
+.container {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 24px;
+    margin: 25px;
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    flex: auto;
+}
+
+p {
+    text-align: center;
+    animation-duration: 3s;
+    animation-name: slidein;
+}
+
+.game .row {
+    display: flex;
+}
+
+.game .column {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+}
+
+.game .Whitecase {
+    background-color: #635C51;
+}
+
+.game .blackCase {
+    background-color: #7D7461;
+}
+
+.game .occupied {
+    border-radius: 50%;
+}
+
+/* Adicione estilos para as peças */
+.game .whitePiece {
+    width: 40px;
+    height: 40px;
+    background-color: #202030;
+    border-radius: 50%;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game .blackPiece {
+    width: 40px;
+    height: 40px;
+    background-color: #B0A990;
+    border-radius: 50%;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.game .empty {
+    background-color: transparent;
+}
+
+/* Adicione este estilo para destacar a peça selecionada */
+.game .selectedPiece {
+    border: 2px solid yellow;
+    box-sizing: border-box;
+}
