@@ -25,11 +25,11 @@ p {
 }
 
 .game .Whitecase {
-    background-color: #635C51;
+    background-color: #CBDFBD;
 }
 
 .game .blackCase {
-    background-color: #7D7461;
+    background-color: #F19C79;
 }
 
 .game .occupied {
@@ -40,7 +40,7 @@ p {
 .game .whitePiece {
     width: 40px;
     height: 40px;
-    background-color: #202030;
+    background-color: #F6F4D2;
     border-radius: 50%;
     margin: 5px;
     display: flex;
@@ -51,7 +51,7 @@ p {
 .game .blackPiece {
     width: 40px;
     height: 40px;
-    background-color: #B0A990;
+    background-color: #A44A3F;
     border-radius: 50%;
     margin: 5px;
     display: flex;
@@ -68,4 +68,8 @@ p {
 .game .selectedPiece {
     border: 2px solid yellow;
     box-sizing: border-box;
+}
+
+.game .possibleMove {
+    background-color: #D4E09B;
 }

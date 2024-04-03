@@ -8,6 +8,17 @@ var board = [
     [0, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 1, 0, 1, 0, 1, 0],
 ];
+
+function checkColor(e) {
+    console.log(e)
+    if (e.classList.contains("blackPiece")) {
+        return 1
+    } else if (e.classList.contains("whitePiece")) {
+        return 0
+    }
+
+}
+
 function buildBoard() {
     const game = document.getElementById("game");
     game.innerHTML = "";
@@ -68,10 +79,12 @@ function movePiece(e) {
             // Remove a seleção da peça
             selectedPiece.classList.remove("selectedPiece");
             selectedPiece = null;
+            removePossibleMoves();
         } else {
             // Remove a seleção da peça anteriormente selecionada (se houver)
             if (selectedPiece !== null) {
                 selectedPiece.classList.remove("selectedPiece");
+                removePossibleMoves();
             }
             // Seleciona a peça clicada
             selectedPiece = cell;
@@ -82,24 +95,34 @@ function movePiece(e) {
 
             // Destaca as células correspondentes às possíveis jogadas
             possibleMoves.forEach(move => {
-                var newCell = document.querySelector(`.column[row='${move.newRow}'][column='${move.newColumn}']`);
+                var newCell = document.querySelector(`.column[row="${move.newRow}"][column="${move.newColumn}"]`);
                 newCell.classList.add("possibleMove");
             });
+
+
         }
     } else {
         // Se clicou em uma célula vazia, move a peça para essa célula (se houver uma peça selecionada)
         if (selectedPiece !== null) {
-            // Move a peça para a célula clicada
-            selectedPiece.setAttribute("row", row.toString());
-            selectedPiece.setAttribute("column", column.toString());
-            cell.appendChild(selectedPiece);
 
-            // Remove a seleção da peça e das possíveis jogadas
-            selectedPiece.classList.remove("selectedPiece");
-            selectedPiece = null;
-            document.querySelectorAll(".possibleMove").forEach(move => {
-                move.classList.remove("possibleMove");
-            });
+            if (checkMove(cell)) {
+
+                // Move a peça para a célula clicada
+                selectedPiece.setAttribute("row", row.toString());
+                selectedPiece.setAttribute("column", column.toString());
+
+                updatePosition(cell);
+                cell.appendChild(selectedPiece);
+
+
+
+
+
+                // Remove a seleção da peça e das possíveis jogadas
+                selectedPiece.classList.remove("selectedPiece");
+                selectedPiece = null;
+                removePossibleMoves();
+            }
         }
     }
 }
@@ -112,7 +135,7 @@ function getPossibleMoves(row, column) {
     let piece = board[row][column];
     if (piece === 1 || piece === -1) {
         // Movimento básico para peças brancas (para baixo)
-        if (piece === 1) {
+        if (piece === -1) {
             if (isValidMove(row + 1, column + 1)) {
                 possibleMoves.push({ newRow: row + 1, newColumn: column + 1 });
             }
@@ -121,7 +144,7 @@ function getPossibleMoves(row, column) {
             }
         }
         // Movimento básico para peças pretas (para cima)
-        else if (piece === -1) {
+        else if (piece === 1) {
             if (isValidMove(row - 1, column + 1)) {
                 possibleMoves.push({ newRow: row - 1, newColumn: column + 1 });
             }
@@ -145,6 +168,34 @@ function isValidMove(row, column) {
     return false;
 }
 
+function checkMove(piece) {
 
+    return true
+}
+
+function updatePosition(target) {
+    selectedPiece_split = selectedPiece.dataset.position.split("-")
+    target_split = target.dataset.position.split("-")
+
+    console.log(target)
+
+    oldPosition = [parseInt(selectedPiece_split[0]), parseInt(selectedPiece_split[1])];
+    newPosition = [parseInt(target_split[0]), parseInt(target_split[1])];
+
+    board[oldPosition[0]][oldPosition[1]] = 0
+
+    if (checkColor) {
+        board[newPosition[0]][newPosition[1]] = -1
+    } else {
+        board[newPosition[0]][newPosition[1]] = 1
+    }
+
+}
+
+function removePossibleMoves() {
+    document.querySelectorAll(".possibleMove").forEach(move => {
+        move.classList.remove("possibleMove");
+    });
+}
 
 buildBoard();
