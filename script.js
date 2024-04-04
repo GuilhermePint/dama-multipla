@@ -1,17 +1,30 @@
 var board = [
-    [0, -1, 0, -1, 0, -1, 0, -1],
+    /* [0, -1, 0, -1, 0, -1, 0, -1],
     [-1, 0, -1, 0, -1, 0, -1, 0],
     [0, -1, 0, -1, 0, -1, 0, -1],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [1, 0, 1, 0, 1, 0, 1, 0],
     [0, 1, 0, 1, 0, 1, 0, 1],
-    [1, 0, 1, 0, 1, 0, 1, 0],
+    [1, 0, 1, 0, 1, 0, 1, 0], */
+
+    [0, -1, 0, -1, 0, -1],
+    [-1, 0, -1, 0, -1, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 1, 0, 1],
+    [1, 0, 1, 0, 1, 0]
 ];
 
 //resetar jogo
 const resetButton = document.getElementById("resetButton");
 resetButton.addEventListener("click", resetGame);
+
+var currentPlayer = 1;
+
+function switchPlayer() {
+    currentPlayer = currentPlayer === 1 ? -1 : 1;
+}
 
 /**
  * Verifica a cor de uma peça representada por um elemento HTML.
@@ -83,7 +96,10 @@ function movePiece(e) {
     var row = parseInt(cell.getAttribute("row"));
     var column = parseInt(cell.getAttribute("column"));
 
-    if (cell.classList.contains("occupied")) {
+    if (
+        (cell.classList.contains("blackPiece") && currentPlayer === 1) ||
+        (cell.classList.contains("whitePiece") && currentPlayer === -1)
+    ) {
 
         // Verifica se a peça clicada é a mesma que foi selecionada anteriormente
         if (selectedPiece === cell) {
@@ -122,9 +138,17 @@ function movePiece(e) {
                 selectedPiece = null;
                 removePossibleMoves();
                 buildBoard();
+
+                switchPlayer();
             }
         }
     }
+}
+
+
+function is_valid_move(row, column) {
+
+    return row >= 0 && row < 6 && column >= 0 && column < 6;
 }
 
 /**
@@ -141,65 +165,50 @@ function getPossibleMoves(row, column) {
     // Verifica se a peça é uma peça branca ou preta
     let piece = board[row][column];
     if (piece === 1 || piece === -1) {
-        // Movimento básico para peças brancas (para baixo)
         if (piece === -1) {
-            if (board[row + 1][column + 1] === 0) {
+            if (is_valid_move(row + 1, column + 1) && board[row + 1][column + 1] === 0) {
                 possibleMoves.push({ newRow: row + 1, newColumn: column + 1 });
             }
-            if (board[row + 1][column - 1] === 0) {
+            if (is_valid_move(row + 1, column - 1) && board[row + 1][column - 1] === 0) {
                 possibleMoves.push({ newRow: row + 1, newColumn: column - 1 });
             }
             if (board[row + 1][column + 1] === 1) {
-                if (board[row + 2][column + 2] === 0) {
+                if (is_valid_move(row + 2, column + 2) && board[row + 2][column + 2] === 0) {
                     possibleMoves.push({ newRow: row + 2, newColumn: column + 2 });
                 }
             }
             if (board[row + 1][column - 1] === 1) {
-                if (board[row + 2][column - 2] === 0) {
+                if (is_valid_move(row + 2, column - 2) && board[row + 2][column - 2] === 0) {
                     possibleMoves.push({ newRow: row + 2, newColumn: column - 2 });
                 }
             }
-
-        }
-        // Movimento básico para peças pretas (para cima)
-        else if (piece === 1) {
-            if (board[row - 1][column + 1] === 0) {
+        } else if (piece === 1) {
+            if (is_valid_move(row - 1, column + 1) && board[row - 1][column + 1] === 0) {
                 possibleMoves.push({ newRow: row - 1, newColumn: column + 1 });
             }
-            if (board[row - 1][column - 1] === 0) {
+            if (is_valid_move(row - 1, column - 1) && board[row - 1][column - 1] === 0) {
                 possibleMoves.push({ newRow: row - 1, newColumn: column - 1 });
             }
             if (board[row - 1][column + 1] === -1) {
-                if (board[row - 2][column + 2] === 0) {
+                if (is_valid_move(row - 2, column + 2) && board[row - 2][column + 2] === 0) {
                     possibleMoves.push({ newRow: row - 2, newColumn: column + 2 });
                 }
             }
             if (board[row - 1][column - 1] === -1) {
-                if (board[row - 2][column - 2] === 0) {
+                if (is_valid_move(row - 2, column - 2) && board[row - 2][column - 2] === 0) {
                     possibleMoves.push({ newRow: row - 2, newColumn: column - 2 });
                 }
             }
         }
     }
-
     return possibleMoves;
 }
 
-function isValidMove(row, column) {
-    // Verifica se a posição está dentro do tabuleiro
-    if (row >= 0 && row < 8 && column >= 0 && column < 8) {
-        // Verifica se a posição está vazia
-        if (board[row][column] === 0) {
-            return true;
-        }
-    }
-    return false;
-}
 
 function checkMove(target) {
-    oldPosition = getPosition(selectedPiece);
-    targetPosition = getPosition(target)
-    possibleMoves = getPossibleMoves(oldPosition[0], oldPosition[1])
+    let oldPosition = getPosition(selectedPiece);
+    let targetPosition = getPosition(target);
+    let possibleMoves = getPossibleMoves(oldPosition[0], oldPosition[1]);
 
     if (checkColor(selectedPiece)) {
         if (board[targetPosition[0]][targetPosition[1]] === (1 || -1)) {
@@ -228,20 +237,32 @@ function checkMove(target) {
 }
 
 function getPosition(e) {
-    e_split = e.dataset.position.split("-")
+    e_split = e.dataset.position.split("-");
+    let ePosition;
     return ePosition = [parseInt(e_split[0]), parseInt(e_split[1])];
 }
 
 function updatePosition(target) {
-    oldPosition = getPosition(selectedPiece)
-    newPosition = getPosition(target)
+    let oldPosition = getPosition(selectedPiece)
+    let newPosition = getPosition(target)
 
     board[oldPosition[0]][oldPosition[1]] = 0
 
     if (checkColor(selectedPiece)) {
         board[newPosition[0]][newPosition[1]] = -1
+        if (Math.abs(newPosition[0] - oldPosition[0]) === 2 && Math.abs(newPosition[1] - oldPosition[1]) === 2) {
+            let capturedRow = (oldPosition[0] + newPosition[0]) / 2;
+            let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
+            board[capturedRow][capturedColumn] = 0;
+        }
     } else {
         board[newPosition[0]][newPosition[1]] = 1
+
+        if (Math.abs(newPosition[0] - oldPosition[0]) === 2 && Math.abs(newPosition[1] - oldPosition[1]) === 2) {
+            let capturedRow = (oldPosition[0] + newPosition[0]) / 2;
+            let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
+            board[capturedRow][capturedColumn] = 0;
+        }
     }
 
     selectedPiece.setAttribute("data-position", `${newPosition[0]}-${newPosition[1]}`);
@@ -256,14 +277,21 @@ function removePossibleMoves() {
 
 function resetGame() {
     board = [
-        [0, -1, 0, -1, 0, -1, 0, -1],
+        /* [0, -1, 0, -1, 0, -1, 0, -1],
         [-1, 0, -1, 0, -1, 0, -1, 0],
         [0, -1, 0, -1, 0, -1, 0, -1],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [1, 0, 1, 0, 1, 0, 1, 0],
         [0, 1, 0, 1, 0, 1, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 0],
+        [1, 0, 1, 0, 1, 0, 1, 0], */
+
+        [0, -1, 0, -1, 0, -1],
+        [-1, 0, -1, 0, -1, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 1, 0, 1, 0, 1],
+        [1, 0, 1, 0, 1, 0]
     ];
 
     buildBoard();
