@@ -20,11 +20,59 @@ var board = [
 const resetButton = document.getElementById("resetButton");
 resetButton.addEventListener("click", resetGame);
 
+//variavel do jogador atual; 1 para jogador preto e -1 para jogador branco
 var currentPlayer = 1;
 
 function switchPlayer() {
     currentPlayer = currentPlayer === 1 ? -1 : 1;
 }
+
+function makeRandomAIMove() {
+    // Encontra a primeira peça branca no tabuleiro
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j] === 1) {
+                const currentPiece = document.querySelector(`.column[row="${i}"][column="${j}"] .occupied`);
+                const possibleMoves = getPossibleMoves(i, j);
+
+                if (possibleMoves.length > 0) {
+                    selectedPiece = currentPiece;
+                    break;
+                }
+            }
+        }
+        if (selectedPiece) {
+            break;
+        }
+    }
+
+    selectedPiece.classList.add("selectedPiece");
+
+    const validMoves = [];
+
+    const pieceRow = parseInt(selectedPiece.getAttribute("row"));
+    const pieceColumn = parseInt(selectedPiece.getAttribute("column"));
+
+    const possibleMoves = getPossibleMoves(pieceRow, pieceColumn);
+
+    validMoves.push(...possibleMoves);
+
+    const randomMoveIndex = Math.floor(Math.random() * validMoves.length);
+    const randomMove = validMoves[randomMoveIndex];
+
+    const target = document.querySelector(`.column[row="${randomMove.newRow}"][column="${randomMove.newColumn}"]`);
+
+    updatePosition(target);
+
+    buildBoard();
+
+    selectedPiece.classList.remove("selectedPiece");
+
+    switchPlayer();
+
+    checkVictory();
+}
+
 
 /**
  * Verifica a cor de uma peça representada por um elemento HTML.
@@ -96,6 +144,7 @@ function movePiece(e) {
     var row = parseInt(cell.getAttribute("row"));
     var column = parseInt(cell.getAttribute("column"));
 
+
     if (
         (cell.classList.contains("blackPiece") && currentPlayer === 1) ||
         (cell.classList.contains("whitePiece") && currentPlayer === -1)
@@ -132,6 +181,7 @@ function movePiece(e) {
 
             //checa se o movimento é valido
             if (checkMove(cell)) {
+
                 updatePosition(cell);
                 // Remove a seleção da peça e das possíveis jogadas
                 selectedPiece.classList.remove("selectedPiece");
@@ -139,7 +189,12 @@ function movePiece(e) {
                 removePossibleMoves();
                 buildBoard();
 
+
+
                 switchPlayer();
+                checkVictory();
+                makeRandomAIMove();
+
             }
         }
     }
@@ -159,6 +214,7 @@ function is_valid_move(row, column) {
  * @returns {Array} Um array contendo objetos representando as coordenadas das possíveis jogadas.
  */
 function getPossibleMoves(row, column) {
+
     // Array para armazenar as possíveis jogadas
     let possibleMoves = [];
 
@@ -201,8 +257,10 @@ function getPossibleMoves(row, column) {
             }
         }
     }
+
     return possibleMoves;
 }
+
 
 
 function checkMove(target) {
@@ -254,7 +312,12 @@ function updatePosition(target) {
             let capturedRow = (oldPosition[0] + newPosition[0]) / 2;
             let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
             board[capturedRow][capturedColumn] = 0;
+
+            // Verificar se a peça preta alcançou a última linha
+
         }
+
+
     } else {
         board[newPosition[0]][newPosition[1]] = 1
 
@@ -262,11 +325,36 @@ function updatePosition(target) {
             let capturedRow = (oldPosition[0] + newPosition[0]) / 2;
             let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
             board[capturedRow][capturedColumn] = 0;
+
+
         }
+
     }
 
     selectedPiece.setAttribute("data-position", `${newPosition[0]}-${newPosition[1]}`);
 
+}
+
+function checkVictory() {
+    // Verifica se há alguma peça branca na última linha
+    for (let column = 0; column < 6; column++) {
+        if (board[0][column] === 1) {
+            alert("Peça branca venceu!");
+            resetGame();
+            return true;
+        }
+    }
+
+    // Verifica se há alguma peça preta na primeira linha
+    for (let column = 0; column < 6; column++) {
+        if (board[5][column] === -1) {
+            alert("Peça preta venceu!");
+            resetGame();
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function removePossibleMoves() {
