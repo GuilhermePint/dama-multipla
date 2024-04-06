@@ -30,11 +30,13 @@ function createGameInstance(gameContainerId) {
     }
 
     function makeRandomAIMove() {
+        const gameContainer = document.getElementById(gameContainerId);
+
         // Encontra a primeira peça branca no tabuleiro
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
                 if (board[i][j] === 1) {
-                    const currentPiece = document.querySelector(`.column[row="${i}"][column="${j}"] .occupied`);
+                    const currentPiece = gameContainer.querySelector(`.column[row="${i}"][column="${j}"] .occupied`);
                     const possibleMoves = getPossibleMoves(i, j);
 
                     if (possibleMoves.length > 0) {
@@ -62,16 +64,18 @@ function createGameInstance(gameContainerId) {
         const randomMoveIndex = Math.floor(Math.random() * validMoves.length);
         const randomMove = validMoves[randomMoveIndex];
 
-        const target = document.querySelector(`.column[row="${randomMove.newRow}"][column="${randomMove.newColumn}"]`);
+        const target = gameContainer.querySelector(`.column[row="${randomMove.newRow}"][column="${randomMove.newColumn}"]`);
 
-        updatePosition(target);
+        setTimeout(() => {
+            updatePosition(target);
 
-        buildBoard(gameContainerId);
+            buildBoard(gameContainerId);
 
-        selectedPiece.classList.remove("selectedPiece");
+            selectedPiece.classList.remove("selectedPiece");
+
+        }, 500);
 
         switchPlayer();
-
         checkVictory();
     }
 
@@ -170,7 +174,7 @@ function createGameInstance(gameContainerId) {
 
                 // Obtém as possíveis jogadas para a peça selecionada
                 var possibleMoves = getPossibleMoves(row, column);
-                console.log(gameContainerId)
+
 
 
 
@@ -199,8 +203,9 @@ function createGameInstance(gameContainerId) {
 
 
                     switchPlayer();
-                    checkVictory();
+
                     makeRandomAIMove();
+                    checkVictory();
 
                 }
             }
@@ -343,7 +348,6 @@ function createGameInstance(gameContainerId) {
     }
 
     function checkVictory() {
-        // Verifica se há alguma peça branca na última linha
         for (let column = 0; column < 6; column++) {
             if (board[0][column] === 1) {
                 alert("Peça branca venceu!");
@@ -352,7 +356,6 @@ function createGameInstance(gameContainerId) {
             }
         }
 
-        // Verifica se há alguma peça preta na primeira linha
         for (let column = 0; column < 6; column++) {
             if (board[5][column] === -1) {
                 alert("Peça preta venceu!");
