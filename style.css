@@ -21,6 +21,8 @@
     margin-left: auto;
     margin-right: auto;
     align-items: center;
+
+
 }
 
 .container {
@@ -28,7 +30,8 @@
     font-size: 24px;
     margin: 25px;
     max-width: fit-content;
-    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
     display: grid;
     grid-gap: 10px;
 }
