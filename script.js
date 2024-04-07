@@ -25,11 +25,178 @@ function createGameInstance(gameContainerId) {
     //variavel do jogador atual; 1 para jogador preto e -1 para jogador branco
     var currentPlayer = 1;
 
+
     function switchPlayer() {
         currentPlayer = currentPlayer === 1 ? -1 : 1;
     }
 
+    function evaluate(board) {
+        let whiteScore = 0;
+        let blackScore = 0;
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j] === 1) {
+                    whiteScore++;
+                } else if (board[i][j] === -1) {
+                    blackScore++;
+                }
+            }
+        }
+        return whiteScore - blackScore;
+    }
+
+    function printBoard(board) {
+        for (let i = 0; i < board.length; i++) {
+            let row = '';
+            for (let j = 0; j < board[i].length; j++) {
+                row += board[i][j] + ' ';
+            }
+            console.log(row);
+        }
+    }
+
+    function minimax(tempBoard, depth, maximizingPlayer) {
+
+        if (depth === 0) {
+            return evaluate(tempBoard);
+        }
+
+        if (maximizingPlayer) {
+            let maxEval = -Infinity;
+            for (let i = 0; i < tempBoard.length; i++) {
+                for (let j = 0; j < tempBoard[i].length; j++) {
+                    if (tempBoard[i][j] === -1) {
+                        let possibleMoves = getPossibleMoves(i, j);
+                        for (let move of possibleMoves) {
+                            let updatedBoard = updateSimulatedPosition(tempBoard, i, j, move.newRow, move.newColumn); // Corrigido aqui
+                            let eval = minimax(updatedBoard, depth - 1, false);
+                            maxEval = Math.max(maxEval, eval);
+                        }
+                    }
+                }
+            }
+            return maxEval;
+        } else {
+            let minEval = Infinity;
+            for (let i = 0; i < tempBoard.length; i++) {
+                for (let j = 0; j < tempBoard[i].length; j++) {
+                    if (tempBoard[i][j] === 1) { // Verifica se é uma peça branca
+                        let possibleMoves = getPossibleMoves(i, j); // Obtém os movimentos possíveis para a peça branca
+                        for (let move of possibleMoves) {
+                            let updatedBoard = updateSimulatedPosition(tempBoard, i, j, move.newRow, move.newColumn); // Corrigido aqui
+                            let eval = minimax(updatedBoard, depth - 1, true);
+                            minEval = Math.min(minEval, eval);
+                        }
+                    }
+                }
+            }
+            return minEval;
+        }
+    }
+
+
+    function updateSimulatedPosition(tempBoard, oldRow, oldColumn, newRow, newColumn) {
+        /* console.log("Board temporária")
+        printBoard(tempBoard) */
+        let clonedBoard = cloneBoard(tempBoard);
+        clonedBoard[oldRow][oldColumn] = 0; // Remove a peça da posição antiga
+        clonedBoard[newRow][newColumn] = tempBoard[oldRow][oldColumn]; // Coloca a peça na nova posição
+        if (Math.abs(newRow - oldRow) === 2 && Math.abs(newColumn - oldColumn) === 2) {
+            // Se houve uma captura, remove a peça capturada
+            let capturedRow = (oldRow + newRow) / 2;
+            let capturedColumn = (oldColumn + newColumn) / 2;
+            clonedBoard[capturedRow][capturedColumn] = 0;
+        }
+        /* console.log("Board clonada")
+        printBoard(clonedBoard)
+ */
+
+        return clonedBoard;
+    }
+
+    function makeAIMove() {
+
+        const gameContainer = document.getElementById(gameContainerId);
+
+        const bestMove = getBestMove(board, currentPlayer);
+
+        const currentPiece = gameContainer.querySelector(`.column[row="${bestMove.oldRow}"][column="${bestMove.oldColumn}"] .occupied`);
+        selectedPiece = currentPiece
+        selectedPiece.classList.add("selectedPiece");
+
+        const target = gameContainer.querySelector(`.column[row="${bestMove.newRow}"][column="${bestMove.newColumn}"]`);
+
+
+        updatePosition(target);
+
+    }
+
+    function getBestMove(board, player) {
+        let bestMove = null;
+        let bestScore = -Infinity;
+        let depth = 1;
+
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j] === player) {
+
+                    const possibleMoves = getPossibleMoves(i, j);
+
+                    for (let move of possibleMoves) {
+                        const simulatedBoard = updateSimulatedPosition(board, i, j, move.newRow, move.newColumn);
+                        const score = minimax(simulatedBoard, depth, player === -1 ? false : true);
+
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMove = { oldRow: i, oldColumn: j, newRow: move.newRow, newColumn: move.newColumn };
+                        }
+                    }
+                }
+            }
+        }
+
+        return bestMove;
+    }
+
     function makeRandomAIMove() {
+        //const gameContainer = document.getElementById(gameContainerId);
+
+        // Faz a jogada da IA
+        makeAIMove();
+
+        // Atualiza o tabuleiro
+        setTimeout(() => {
+            switchPlayer();
+            checkVictory();
+            buildBoard(gameContainerId);
+        }, 250);
+
+    }
+
+    function cloneBoard(board) {
+        // Inicializa uma nova matriz para armazenar a cópia do tabuleiro
+        const clonedBoard = [];
+
+        // Percorre cada linha do tabuleiro original
+        for (let i = 0; i < board.length; i++) {
+            // Inicializa uma nova linha para a matriz de cópia
+            const newRow = [];
+
+            // Percorre cada coluna da linha atual do tabuleiro original
+            for (let j = 0; j < board[i].length; j++) {
+                // Copia o valor da célula atual para a nova linha
+                newRow.push(board[i][j]);
+            }
+
+            // Adiciona a nova linha à matriz de cópia
+            clonedBoard.push(newRow);
+        }
+
+        // Retorna a matriz de cópia
+        return clonedBoard;
+    }
+
+    /* function makeRandomAIMove() {
         const gameContainer = document.getElementById(gameContainerId);
 
         // Encontra a primeira peça branca no tabuleiro
@@ -77,7 +244,7 @@ function createGameInstance(gameContainerId) {
 
         switchPlayer();
         checkVictory();
-    }
+    } */
 
 
     /**
@@ -199,13 +366,12 @@ function createGameInstance(gameContainerId) {
                     selectedPiece = null;
                     removePossibleMoves();
                     buildBoard(gameContainerId);
+                    checkVictory();
 
-
-
-                    switchPlayer();
 
                     makeRandomAIMove();
-                    checkVictory();
+                    switchPlayer();
+
 
                 }
             }
@@ -273,8 +439,6 @@ function createGameInstance(gameContainerId) {
         return possibleMoves;
     }
 
-
-
     function checkMove(target) {
         let oldPosition = getPosition(selectedPiece);
         let targetPosition = getPosition(target);
@@ -325,8 +489,6 @@ function createGameInstance(gameContainerId) {
                 let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
                 board[capturedRow][capturedColumn] = 0;
 
-                // Verificar se a peça preta alcançou a última linha
-
             }
 
 
@@ -337,7 +499,6 @@ function createGameInstance(gameContainerId) {
                 let capturedRow = (oldPosition[0] + newPosition[0]) / 2;
                 let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
                 board[capturedRow][capturedColumn] = 0;
-
 
             }
 
