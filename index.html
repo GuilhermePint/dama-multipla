@@ -4,35 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dama Multipla</title>
+    <title>Dama Multipla - Damei</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+    <header id="header" class="headerPre" onclick="homePage()" style="cursor: pointer;">
+        <img src="/source/image/header.png">
+    </header>
     <div class="doc">
         <div class="init">
             <button class="button-6" id="initGame">Iniciar jogo</button>
         </div>
-        <div class="page">
+        <div id="mainPage" class="hidden">
 
             <div class="container">
-                <h2 id="game1Title" class="hidden">Jogo 1</h2>
-                <div id="game1" class="game"></div>
+                <h2 id="game1Title">Jogo 1</h2>
+                <div id="game1" class="game1"></div>
 
             </div>
 
             <div class="container">
-                <h2 id="game2Title" class="hidden">Jogo 2</h2>
-                <div id="game2" class="game"></div>
+                <h2 id="game2Title">Jogo 2</h2>
+                <div id="game2" class="game2"></div>
 
             </div>
 
         </div>
-        <button class="button-6" id="resetButton">Resetar Jogo 1</button>
+        <button style="opacity: 0;" class="hidden" id="resetButton">Resetar Jogo</button>
     </div>
+    <footer>
+        <ul>
+            <li>
+                <a style="cursor: pointer;" onclick="aboutUs()">Sobre nós</a>
+            </li>
+        </ul>
+    </footer>
+
 
 
     <script src="script.js"></script>
+    <script src="main.js"></script>
 
 </body>
 

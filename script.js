@@ -506,15 +506,8 @@ function createGameInstance(gameContainerId) {
 
         buildBoard(gameContainerId);
     }
+
     buildBoard(gameContainerId);
-}
-
-const iniciarJogo = document.getElementById("initGame");
-iniciarJogo.addEventListener("click", initGame);
-
-async function initGame() {
-    createGameInstance("game1");
-    createGameInstance("game2");
 }
 
 
