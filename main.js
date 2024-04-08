@@ -29,12 +29,13 @@ function initGame() {
         resetButton.style.opacity = '1';
         resetButton.style.marginTop = '15px';
     }, 2000);
-
-
-
 }
 
-function teste() {
-
+function aboutUs() {
+    window.location.href = "about.html";
 }
+function homePage() {
+    window.location.href = "index.html";
+}
+
 
