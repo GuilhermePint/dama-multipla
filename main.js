@@ -3,21 +3,38 @@
 var iniciarJogo = document.getElementById("initGame");
 iniciarJogo.addEventListener("click", initGame);
 
+var header = document.getElementById("header");
+
 var mainPage = document.getElementById("mainPage");
 var resetButton = document.getElementById("resetButton");
 
-async function initGame() {
+function initGame() {
     createGameInstance("game1");
     createGameInstance("game2");
     mainPage.classList.remove("hidden");
     mainPage.classList.add("page");
 
-    resetButton.classList.remove("hidden");
-    resetButton.classList.add("button-6");
-    resetButton.classList.add("animat");
+    const cls = ["button-6", "animat"]
 
-    iniciarJogo.classList.remove("bitt")
-    iniciarJogo.classList.add("hidden")
+    resetButton.classList.replace("hidden", ...cls);
+
+
+    iniciarJogo.classList.replace("button-6", "hidden")
+
+    setTimeout(() => {
+        header.classList.replace("headerPre", "headerPos");
+    }, 100);
+
+    setTimeout(() => {
+        resetButton.style.opacity = '1';
+        resetButton.style.marginTop = '15px';
+    }, 2000);
+
+
+
+}
+
+function teste() {
 
 }
 

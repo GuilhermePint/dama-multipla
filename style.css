@@ -9,7 +9,6 @@
     height: auto;
     z-index: 0;
     text-align: center;
-    /* Add This*/
 
 }
 
@@ -21,15 +20,15 @@
     margin-left: auto;
     margin-right: auto;
     align-items: center;
-    animation: test 1s;
+    animation: slideIn 1s;
 
 }
 
 .animat {
-    animation: test 1s;
+    animation: slideIn 1s;
 }
 
-@keyframes test {
+@keyframes slideIn {
     from {
         transform: scale(0);
     }
@@ -46,7 +45,7 @@
 .container {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 24px;
-    margin: 25px;
+
     max-width: fit-content;
     margin-left: auto;
     margin-right: auto;
@@ -104,30 +103,42 @@
     transform: translateY(0);
 }
 
-.game .row {
+.game1 .row {
     display: flex;
 }
 
-.game .column {
+.game1 .column {
     width: 50px;
     height: 50px;
     border: 1px solid black;
 }
 
-.game .Whitecase {
+
+/* F05D5E 
+    0F7173
+    E7ECEF
+    272932
+*/
+
+/* CBDFBD 
+    F19C79
+    F6F4D2
+    A44A3F
+*/
+.game1 .Whitecase {
     background-color: #CBDFBD;
 }
 
-.game .blackCase {
+.game1 .blackCase {
     background-color: #F19C79;
 }
 
-.game .occupied {
+.game1 .occupied {
     border-radius: 50%;
 }
 
 /* Adicione estilos para as peças */
-.game .whitePiece {
+.game1 .whitePiece {
     width: 40px;
     height: 40px;
     background-color: #F6F4D2;
@@ -138,7 +149,7 @@
     align-items: center;
 }
 
-.game .blackPiece {
+.game1 .blackPiece {
     width: 40px;
     height: 40px;
     background-color: #A44A3F;
@@ -149,17 +160,129 @@
     align-items: center;
 }
 
-
-.game .empty {
+.game1 .empty {
     background-color: transparent;
 }
 
-/* Adicione este estilo para destacar a peça selecionada */
-.game .selectedPiece {
+.game1 .selectedPiece {
     border: 2px solid yellow;
     box-sizing: border-box;
 }
 
-.game .possibleMove {
+.game1 .possibleMove {
     background-color: #D4E09B;
+}
+
+.game2 .row {
+    display: flex;
+}
+
+.game2 .column {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+}
+
+
+/* F05D5E 
+    0F7173
+    E7ECEF
+    272932
+*/
+
+/* CBDFBD 
+    F19C79
+    F6F4D2
+    A44A3F
+*/
+.game2 .Whitecase {
+    background-color: #F05D5E;
+}
+
+.game2 .blackCase {
+    background-color: #0F7173;
+}
+
+.game2 .occupied {
+    border-radius: 50%;
+}
+
+/* Adicione estilos para as peças */
+.game2 .whitePiece {
+    width: 40px;
+    height: 40px;
+    background-color: #E7ECEF;
+    border-radius: 50%;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game2 .blackPiece {
+    width: 40px;
+    height: 40px;
+    background-color: #272932;
+    border-radius: 50%;
+    margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game2 .empty {
+    background-color: transparent;
+}
+
+.game2 .selectedPiece {
+    border: 2px solid yellow;
+    box-sizing: border-box;
+}
+
+.game2 .possibleMove {
+    background-color: #D4E09B;
+}
+
+
+
+.initgame {
+    animation: slideUp 1s;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px) scale(1.4);
+    }
+
+    to {
+        transform: translateY(-15px) scale(1);
+    }
+}
+
+.headerPre {
+    transform: translateY(-15px);
+}
+
+.headerPos {
+    animation: slideUp 1s forwards;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header img {
+
+    width: 100%;
+    height: auto;
+    display: block;
+    max-width: 100vw;
+    max-height: 100vh;
+    object-fit: cover;
+
+}
+
+.reset {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
 }

@@ -9,7 +9,9 @@
 </head>
 
 <body>
-    <button id="pagina">teste</button>
+    <header id="header" class="headerPre" onclick="teste()" style="cursor: pointer;">
+        <img src="/source/image/header.png">
+    </header>
     <div class="doc">
         <div class="init">
             <button class="button-6" id="initGame">Iniciar jogo</button>
@@ -18,25 +20,20 @@
 
             <div class="container">
                 <h2 id="game1Title">Jogo 1</h2>
-                <div id="game1" class="game"></div>
+                <div id="game1" class="game1"></div>
 
             </div>
 
             <div class="container">
                 <h2 id="game2Title">Jogo 2</h2>
-                <div id="game2" class="game"></div>
+                <div id="game2" class="game2"></div>
 
             </div>
 
         </div>
-        <button class="hidden" id="resetButton">Resetar Jogo</button>
+        <button style="opacity: 0;" class="hidden" id="resetButton">Resetar Jogo</button>
     </div>
 
-    <script type="text/javascript">
-        document.getElementById("pagina").onclick = function () {
-            location.href = "./about.html";
-        };
-    </script>
 
 
     <script src="script.js"></script>
