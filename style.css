@@ -17,12 +17,30 @@
     flex: auto;
     display: flex;
     justify-content: center;
-    margin: 150px;
+    gap: 50px;
     margin-left: auto;
     margin-right: auto;
     align-items: center;
+    animation: test 1s;
 
+}
 
+.animat {
+    animation: test 1s;
+}
+
+@keyframes test {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(100%);
+    }
+}
+
+.hidden {
+    display: none;
 }
 
 .container {
@@ -34,6 +52,7 @@
     margin-right: auto;
     display: grid;
     grid-gap: 10px;
+    text-align: center;
 }
 
 /* CSS */

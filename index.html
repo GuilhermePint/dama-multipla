@@ -9,30 +9,38 @@
 </head>
 
 <body>
+    <button id="pagina">teste</button>
     <div class="doc">
         <div class="init">
             <button class="button-6" id="initGame">Iniciar jogo</button>
         </div>
-        <div class="page">
+        <div id="mainPage" class="hidden">
 
             <div class="container">
-                <h2 id="game1Title" class="hidden">Jogo 1</h2>
+                <h2 id="game1Title">Jogo 1</h2>
                 <div id="game1" class="game"></div>
 
             </div>
 
             <div class="container">
-                <h2 id="game2Title" class="hidden">Jogo 2</h2>
+                <h2 id="game2Title">Jogo 2</h2>
                 <div id="game2" class="game"></div>
 
             </div>
 
         </div>
-        <button class="button-6" id="resetButton">Resetar Jogo 1</button>
+        <button class="hidden" id="resetButton">Resetar Jogo</button>
     </div>
+
+    <script type="text/javascript">
+        document.getElementById("pagina").onclick = function () {
+            location.href = "./about.html";
+        };
+    </script>
 
 
     <script src="script.js"></script>
+    <script src="main.js"></script>
 
 </body>
 
