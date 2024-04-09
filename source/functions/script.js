@@ -1,14 +1,14 @@
 function createGameInstance(gameContainerId) {
 
     var board = [
-        /* [0, -1, 0, -1, 0, -1, 0, -1],
-        [-1, 0, -1, 0, -1, 0, -1, 0],
-        [0, -1, 0, -1, 0, -1, 0, -1],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 0, 1, 0, 1, 0, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 1],
-        [1, 0, 1, 0, 1, 0, 1, 0], */
+        /*[0, -1, 0, -1, 0, -1, 0, -1],
+       [-1, 0, -1, 0, -1, 0, -1, 0],
+       [0, -1, 0, -1, 0, -1, 0, -1],
+       [0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0],
+       [1, 0, 1, 0, 1, 0, 1, 0],
+       [0, 1, 0, 1, 0, 1, 0, 1],
+       [1, 0, 1, 0, 1, 0, 1, 0],*/
 
         [0, -1, 0, -1, 0, -1],
         [-1, 0, -1, 0, -1, 0],
@@ -16,6 +16,7 @@ function createGameInstance(gameContainerId) {
         [0, 0, 0, 0, 0, 0],
         [0, 1, 0, 1, 0, 1],
         [1, 0, 1, 0, 1, 0]
+
     ];
 
     //resetar jogo
@@ -45,16 +46,6 @@ function createGameInstance(gameContainerId) {
         return whiteScore - blackScore;
     }
 
-    function printBoard(board) {
-        for (let i = 0; i < board.length; i++) {
-            let row = '';
-            for (let j = 0; j < board[i].length; j++) {
-                row += board[i][j] + ' ';
-            }
-            console.log(row);
-        }
-    }
-
     function minimax(tempBoard, depth, maximizingPlayer) {
 
         if (depth === 0) {
@@ -80,7 +71,7 @@ function createGameInstance(gameContainerId) {
             let minEval = Infinity;
             for (let i = 0; i < tempBoard.length; i++) {
                 for (let j = 0; j < tempBoard[i].length; j++) {
-                    if (tempBoard[i][j] === 1) { // Verifica se é uma peça branca
+                    if (tempBoard[i][j] === 1 || tempBoard[i][j] === 2) { // Verifica se é uma peça branca ou dama branca
                         let possibleMoves = getPossibleMoves(i, j); // Obtém os movimentos possíveis para a peça branca
                         for (let move of possibleMoves) {
                             let updatedBoard = updateSimulatedPosition(tempBoard, i, j, move.newRow, move.newColumn); // Corrigido aqui
@@ -94,10 +85,7 @@ function createGameInstance(gameContainerId) {
         }
     }
 
-
     function updateSimulatedPosition(tempBoard, oldRow, oldColumn, newRow, newColumn) {
-        /* console.log("Board temporária")
-        printBoard(tempBoard) */
         let clonedBoard = cloneBoard(tempBoard);
         clonedBoard[oldRow][oldColumn] = 0; // Remove a peça da posição antiga
         clonedBoard[newRow][newColumn] = tempBoard[oldRow][oldColumn]; // Coloca a peça na nova posição
@@ -107,9 +95,6 @@ function createGameInstance(gameContainerId) {
             let capturedColumn = (oldColumn + newColumn) / 2;
             clonedBoard[capturedRow][capturedColumn] = 0;
         }
-        /* console.log("Board clonada")
-        printBoard(clonedBoard)
- */
 
         return clonedBoard;
     }
@@ -126,7 +111,6 @@ function createGameInstance(gameContainerId) {
 
         const target = gameContainer.querySelector(`.column[row="${bestMove.newRow}"][column="${bestMove.newColumn}"]`);
 
-
         updatePosition(target);
 
     }
@@ -134,12 +118,11 @@ function createGameInstance(gameContainerId) {
     function getBestMove(board, player) {
         let bestMove = null;
         let bestScore = -Infinity;
-        let depth = 1;
+        let depth = 4;
 
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === player) {
-
+                if (board[i][j] === player || board[i][j] === player * 2) { // Considera tanto as peças regulares quanto as damas para o jogador atual
                     const possibleMoves = getPossibleMoves(i, j);
 
                     for (let move of possibleMoves) {
@@ -158,37 +141,28 @@ function createGameInstance(gameContainerId) {
         return bestMove;
     }
 
-    function makeRandomAIMove() {
-        //const gameContainer = document.getElementById(gameContainerId);
 
-        // Faz a jogada da IA
+    function makeAIMoveR() {
         makeAIMove();
 
-        // Atualiza o tabuleiro
         setTimeout(() => {
             switchPlayer();
-            checkVictory();
             buildBoard(gameContainerId);
+            checkVictory(board);
+
         }, 250);
 
     }
 
     function cloneBoard(board) {
-        // Inicializa uma nova matriz para armazenar a cópia do tabuleiro
         const clonedBoard = [];
 
-        // Percorre cada linha do tabuleiro original
         for (let i = 0; i < board.length; i++) {
-            // Inicializa uma nova linha para a matriz de cópia
             const newRow = [];
 
-            // Percorre cada coluna da linha atual do tabuleiro original
             for (let j = 0; j < board[i].length; j++) {
-                // Copia o valor da célula atual para a nova linha
                 newRow.push(board[i][j]);
             }
-
-            // Adiciona a nova linha à matriz de cópia
             clonedBoard.push(newRow);
         }
 
@@ -200,7 +174,7 @@ function createGameInstance(gameContainerId) {
      * Verifica a cor de uma peça representada por um elemento HTML.
      * 
      * @param {HTMLElement} piece - O elemento HTML que representa a peça do jogo.
-     * @returns {number|undefined} Retorna 1 se a peça é preta, 0 se a peça é branca, ou undefined se não for possível determinar a cor.
+     * @returns {number|undefined} Retorna 1 se a peça é preta, 0 se a peça é branca, retorna 2 se for uma dama preta, retorna 3 se for dama branca, ou undefined se não for possível determinar a cor.
      */
     function checkColor(piece) {
 
@@ -208,6 +182,12 @@ function createGameInstance(gameContainerId) {
             return 1
         } else if (piece.classList.contains("whitePiece")) {
             return 0
+        }
+        else if (piece.classList.contains("whiteQueenPiece")) {
+            return 3
+        }
+        else if (piece.classList.contains("blackQueenPiece")) {
+            return 2
         }
     }
 
@@ -230,8 +210,12 @@ function createGameInstance(gameContainerId) {
                 let occupied = "";
                 if (board[i][j] === 1) {
                     occupied = "whitePiece";
+                } else if (board[i][j] === 2) {
+                    occupied = "whiteQueenPiece";
                 } else if (board[i][j] === -1) {
                     occupied = "blackPiece";
+                } else if (board[i][j] === -2) {
+                    occupied = "blackQueenPiece";
                 } else {
                     occupied = "empty";
                 }
@@ -241,12 +225,9 @@ function createGameInstance(gameContainerId) {
                 piece.setAttribute("column", j.toString());
                 piece.setAttribute("data-position", `${i}-${j}`);
 
-                // Removemos o evento de clique da peça
-                // piece.addEventListener("click", movePiece);
 
                 col.appendChild(piece);
                 col.setAttribute("class", `column ${caseType}`);
-                // Adicionamos o evento de clique à célula do tabuleiro
                 col.setAttribute("row", i.toString());
                 col.setAttribute("column", j.toString());
                 col.setAttribute("data-position", `${i}-${j}`);
@@ -269,7 +250,9 @@ function createGameInstance(gameContainerId) {
 
         if (
             (cell.classList.contains("blackPiece") && currentPlayer === 1) ||
-            (cell.classList.contains("whitePiece") && currentPlayer === -1)
+            (cell.classList.contains("blackQueenPiece") && currentPlayer === 1) ||
+            (cell.classList.contains("whitePiece") && currentPlayer === -1) ||
+            (cell.classList.contains("whiteQueenPiece") && currentPlayer === -1)
         ) {
 
             // Verifica se a peça clicada é a mesma que foi selecionada anteriormente
@@ -290,9 +273,6 @@ function createGameInstance(gameContainerId) {
 
                 // Obtém as possíveis jogadas para a peça selecionada
                 var possibleMoves = getPossibleMoves(row, column);
-
-
-
 
                 // Destaca as células correspondentes às possíveis jogadas
                 possibleMoves.forEach(move => {
@@ -315,22 +295,20 @@ function createGameInstance(gameContainerId) {
                     selectedPiece = null;
                     removePossibleMoves();
                     buildBoard(gameContainerId);
-                    checkVictory();
+                    checkVictory(board);
 
-
-                    makeRandomAIMove();
+                    makeAIMoveR();
                     switchPlayer();
-
-
                 }
             }
         }
     }
 
-
     function is_valid_move(row, column) {
+        let numColumns = board[0].length;
 
-        return row >= 0 && row < 6 && column >= 0 && column < 6;
+
+        return row >= 0 && row < numColumns && column >= 0 && column < numColumns;
     }
 
     /**
@@ -355,12 +333,12 @@ function createGameInstance(gameContainerId) {
                 if (is_valid_move(row + 1, column - 1) && board[row + 1][column - 1] === 0) {
                     possibleMoves.push({ newRow: row + 1, newColumn: column - 1 });
                 }
-                if (board[row + 1][column + 1] === 1) {
+                if (board[row + 1][column + 1] === 1 || board[row + 1][column + 1] === 2) {
                     if (is_valid_move(row + 2, column + 2) && board[row + 2][column + 2] === 0) {
                         possibleMoves.push({ newRow: row + 2, newColumn: column + 2 });
                     }
                 }
-                if (board[row + 1][column - 1] === 1) {
+                if (board[row + 1][column - 1] === 1 || board[row + 1][column - 1] === 2) {
                     if (is_valid_move(row + 2, column - 2) && board[row + 2][column - 2] === 0) {
                         possibleMoves.push({ newRow: row + 2, newColumn: column - 2 });
                     }
@@ -372,17 +350,36 @@ function createGameInstance(gameContainerId) {
                 if (is_valid_move(row - 1, column - 1) && board[row - 1][column - 1] === 0) {
                     possibleMoves.push({ newRow: row - 1, newColumn: column - 1 });
                 }
-                if (board[row - 1][column + 1] === -1) {
+                if (board[row - 1][column + 1] === -1 || board[row - 1][column + 1] === -2) {
                     if (is_valid_move(row - 2, column + 2) && board[row - 2][column + 2] === 0) {
                         possibleMoves.push({ newRow: row - 2, newColumn: column + 2 });
                     }
                 }
-                if (board[row - 1][column - 1] === -1) {
+                if (board[row - 1][column - 1] === -1 || board[row - 1][column + 1] === -2) {
                     if (is_valid_move(row - 2, column - 2) && board[row - 2][column - 2] === 0) {
                         possibleMoves.push({ newRow: row - 2, newColumn: column - 2 });
                     }
                 }
             }
+        } else if (piece === 2 || piece === -2) {
+
+            for (let direction of [[-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+                let newRow = row + direction[0];
+                let newColumn = column + direction[1];
+
+                while (is_valid_move(newRow, newColumn) && board[newRow][newColumn] === 0) {
+                    possibleMoves.push({ newRow: newRow, newColumn: newColumn });
+                    newRow += direction[0];
+                    newColumn += direction[1];
+                }
+
+                if (is_valid_move(newRow, newColumn) && board[newRow][newColumn] !== piece && board[newRow][newColumn] !== 0) {
+                    if (is_valid_move(newRow + direction[0], newColumn + direction[1]) && board[newRow + direction[0]][newColumn + direction[1]] === 0) {
+                        possibleMoves.push({ newRow: newRow + direction[0], newColumn: newColumn + direction[1] });
+                    }
+                }
+            }
+
         }
 
         return possibleMoves;
@@ -431,53 +428,81 @@ function createGameInstance(gameContainerId) {
 
         board[oldPosition[0]][oldPosition[1]] = 0
 
-        if (checkColor(selectedPiece)) {
+        if (checkColor(selectedPiece) === 1) {
             board[newPosition[0]][newPosition[1]] = -1
+            if (newPosition[0] === board.length - 1) {
+                board[newPosition[0]][newPosition[1]] = -2; // Representa um Rei
+            }
+
             if (Math.abs(newPosition[0] - oldPosition[0]) === 2 && Math.abs(newPosition[1] - oldPosition[1]) === 2) {
                 let capturedRow = (oldPosition[0] + newPosition[0]) / 2;
                 let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
                 board[capturedRow][capturedColumn] = 0;
-
             }
 
 
-        } else {
+        } else if (checkColor(selectedPiece) === 0) {
             board[newPosition[0]][newPosition[1]] = 1
 
+            if (newPosition[0] === 0) {
+                board[newPosition[0]][newPosition[1]] = 2; // Representa um Rei
+            }
+
             if (Math.abs(newPosition[0] - oldPosition[0]) === 2 && Math.abs(newPosition[1] - oldPosition[1]) === 2) {
                 let capturedRow = (oldPosition[0] + newPosition[0]) / 2;
                 let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
                 board[capturedRow][capturedColumn] = 0;
-
+            }
+        } else if (checkColor(selectedPiece) === 2 || checkColor(selectedPiece) === 3) {
+            if (checkColor(selectedPiece) === 2) {
+                board[newPosition[0]][newPosition[1]] = -2;
+            } else if (checkColor(selectedPiece) === 3) {
+                board[newPosition[0]][newPosition[1]] = 2;
             }
 
+            if (Math.abs(newPosition[0] - oldPosition[0]) > 1 || Math.abs(newPosition[1] - oldPosition[1]) > 1) {
+                for (let i = 1; i < Math.abs(newPosition[0] - oldPosition[0]); i++) {
+                    let capturedRow = oldPosition[0] + i * (newPosition[0] - oldPosition[0]) / Math.abs(newPosition[0] - oldPosition[0]);
+                    let capturedColumn = oldPosition[1] + i * (newPosition[1] - oldPosition[1]) / Math.abs(newPosition[1] - oldPosition[1]);
+                    board[capturedRow][capturedColumn] = 0;
+                }
+            }
         }
-
         selectedPiece.setAttribute("data-position", `${newPosition[0]}-${newPosition[1]}`);
 
     }
 
-    function checkVictory() {
-        for (let column = 0; column < 6; column++) {
-            if (board[0][column] === 1) {
+    function checkVictory(board) {
+        let whiteScore = 0;
+        let blackScore = 0;
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j] === 1 || board[i][j] === 2) {
+                    whiteScore++;
+                } else if (board[i][j] === -1 || board[i][j] === -2) {
+                    blackScore++;
+                }
+            }
+        }
+
+        {
+            if (blackScore === 2) {
                 alert("Peça branca venceu!");
-                currentPlayer = 1
+                currentPlayer = 1;
                 resetGame();
                 return true;
-            }
-        }
-
-        for (let column = 0; column < 6; column++) {
-            if (board[5][column] === -1) {
+            } else if (whiteScore === 2) {
                 alert("Peça preta venceu!");
-                currentPlayer = 1
+                currentPlayer = 1;
                 resetGame();
                 return true;
+            } else {
+                return false; // Nenhum vencedor ainda
             }
-        }
 
-        return false;
+        }
     }
+
 
     function removePossibleMoves() {
         document.querySelectorAll(".possibleMove").forEach(move => {
@@ -488,13 +513,13 @@ function createGameInstance(gameContainerId) {
     function resetGame() {
         board = [
             /* [0, -1, 0, -1, 0, -1, 0, -1],
-            [-1, 0, -1, 0, -1, 0, -1, 0],
-            [0, -1, 0, -1, 0, -1, 0, -1],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 1, 0, 1, 0, 1, 0],
-            [0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0], */
+             [-1, 0, -1, 0, -1, 0, -1, 0],
+             [0, -1, 0, -1, 0, -1, 0, -1],
+             [0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0],
+             [1, 0, 1, 0, 1, 0, 1, 0],
+             [0, 1, 0, 1, 0, 1, 0, 1],
+             [1, 0, 1, 0, 1, 0, 1, 0],*/
 
             [0, -1, 0, -1, 0, -1],
             [-1, 0, -1, 0, -1, 0],
@@ -506,7 +531,6 @@ function createGameInstance(gameContainerId) {
 
         buildBoard(gameContainerId);
     }
-
     buildBoard(gameContainerId);
 }
 
