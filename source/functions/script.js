@@ -47,7 +47,6 @@ function createGameInstance(gameContainerId) {
     }
 
     function minimax(tempBoard, depth, maximizingPlayer) {
-
         if (depth === 0) {
             return evaluate(tempBoard);
         }
@@ -56,7 +55,7 @@ function createGameInstance(gameContainerId) {
             let maxEval = -Infinity;
             for (let i = 0; i < tempBoard.length; i++) {
                 for (let j = 0; j < tempBoard[i].length; j++) {
-                    if (tempBoard[i][j] === -1) {
+                    if (tempBoard[i][j] === -1 || tempBoard[i][j] === -2) {
                         let possibleMoves = getPossibleMoves(i, j);
                         for (let move of possibleMoves) {
                             let updatedBoard = updateSimulatedPosition(tempBoard, i, j, move.newRow, move.newColumn); // Corrigido aqui
@@ -89,15 +88,42 @@ function createGameInstance(gameContainerId) {
         let clonedBoard = cloneBoard(tempBoard);
         clonedBoard[oldRow][oldColumn] = 0; // Remove a peça da posição antiga
         clonedBoard[newRow][newColumn] = tempBoard[oldRow][oldColumn]; // Coloca a peça na nova posição
+
+        // Se houve uma captura, remove a peça capturada
         if (Math.abs(newRow - oldRow) === 2 && Math.abs(newColumn - oldColumn) === 2) {
-            // Se houve uma captura, remove a peça capturada
             let capturedRow = (oldRow + newRow) / 2;
             let capturedColumn = (oldColumn + newColumn) / 2;
             clonedBoard[capturedRow][capturedColumn] = 0;
         }
 
+        // Se a peça for uma dama, verificar e capturar peças em várias direções
+        let piece = tempBoard[oldRow][oldColumn];
+        if (piece === 2 || piece === -2) {
+            for (let direction of [[-1, -1], [-1, 1], [1, -1], [1, 1]]) {
+                let newRowTemp = newRow + direction[0];
+                let newColumnTemp = newColumn + direction[1];
+
+                // Enquanto a nova posição estiver dentro dos limites do tabuleiro e a célula estiver vazia
+                while (is_valid_move(newRowTemp, newColumnTemp) && clonedBoard[newRowTemp][newColumnTemp] === 0) {
+                    newRowTemp += direction[0];
+                    newColumnTemp += direction[1];
+                }
+
+                // Se a nova posição for válida e contiver uma peça adversária
+                if (is_valid_move(newRowTemp, newColumnTemp) && clonedBoard[newRowTemp][newColumnTemp] !== piece && clonedBoard[newRowTemp][newColumnTemp] !== 0) {
+                    // Verifica se a célula após a peça adversária está vazia para capturá-la
+                    let newRowAfterCapture = newRowTemp + direction[0];
+                    let newColumnAfterCapture = newColumnTemp + direction[1];
+                    if (is_valid_move(newRowAfterCapture, newColumnAfterCapture) && clonedBoard[newRowAfterCapture][newColumnAfterCapture] === 0) {
+                        clonedBoard[newRowTemp][newColumnTemp] = 0; // Remove a peça capturada
+                    }
+                }
+            }
+        }
+
         return clonedBoard;
     }
+
 
     function makeAIMove() {
 
@@ -118,7 +144,7 @@ function createGameInstance(gameContainerId) {
     function getBestMove(board, player) {
         let bestMove = null;
         let bestScore = -Infinity;
-        let depth = 4;
+        let depth = 5;
 
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
@@ -306,8 +332,6 @@ function createGameInstance(gameContainerId) {
 
     function is_valid_move(row, column) {
         let numColumns = board[0].length;
-
-
         return row >= 0 && row < numColumns && column >= 0 && column < numColumns;
     }
 
@@ -430,6 +454,7 @@ function createGameInstance(gameContainerId) {
 
         if (checkColor(selectedPiece) === 1) {
             board[newPosition[0]][newPosition[1]] = -1
+
             if (newPosition[0] === board.length - 1) {
                 board[newPosition[0]][newPosition[1]] = -2; // Representa um Rei
             }
@@ -439,7 +464,6 @@ function createGameInstance(gameContainerId) {
                 let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
                 board[capturedRow][capturedColumn] = 0;
             }
-
 
         } else if (checkColor(selectedPiece) === 0) {
             board[newPosition[0]][newPosition[1]] = 1
@@ -453,7 +477,9 @@ function createGameInstance(gameContainerId) {
                 let capturedColumn = (oldPosition[1] + newPosition[1]) / 2;
                 board[capturedRow][capturedColumn] = 0;
             }
+
         } else if (checkColor(selectedPiece) === 2 || checkColor(selectedPiece) === 3) {
+
             if (checkColor(selectedPiece) === 2) {
                 board[newPosition[0]][newPosition[1]] = -2;
             } else if (checkColor(selectedPiece) === 3) {
