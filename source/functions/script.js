@@ -21,7 +21,9 @@ function createGameInstance(gameContainerId) {
 
     //resetar jogo
     const resetButton = document.getElementById("resetButton");
+    const resetButton0 = document.getElementById("resetButton0");
     resetButton.addEventListener("click", resetGame);
+    resetButton0.addEventListener("click", resetGame);
 
     //variavel do jogador atual; 1 para jogador preto e -1 para jogador branco
     var currentPlayer = 1;
@@ -96,31 +98,6 @@ function createGameInstance(gameContainerId) {
             clonedBoard[capturedRow][capturedColumn] = 0;
         }
 
-        // Se a peça for uma dama, verificar e capturar peças em várias direções
-        let piece = tempBoard[oldRow][oldColumn];
-        if (piece === 2 || piece === -2) {
-            for (let direction of [[-1, -1], [-1, 1], [1, -1], [1, 1]]) {
-                let newRowTemp = newRow + direction[0];
-                let newColumnTemp = newColumn + direction[1];
-
-                // Enquanto a nova posição estiver dentro dos limites do tabuleiro e a célula estiver vazia
-                while (is_valid_move(newRowTemp, newColumnTemp) && clonedBoard[newRowTemp][newColumnTemp] === 0) {
-                    newRowTemp += direction[0];
-                    newColumnTemp += direction[1];
-                }
-
-                // Se a nova posição for válida e contiver uma peça adversária
-                if (is_valid_move(newRowTemp, newColumnTemp) && clonedBoard[newRowTemp][newColumnTemp] !== piece && clonedBoard[newRowTemp][newColumnTemp] !== 0) {
-                    // Verifica se a célula após a peça adversária está vazia para capturá-la
-                    let newRowAfterCapture = newRowTemp + direction[0];
-                    let newColumnAfterCapture = newColumnTemp + direction[1];
-                    if (is_valid_move(newRowAfterCapture, newColumnAfterCapture) && clonedBoard[newRowAfterCapture][newColumnAfterCapture] === 0) {
-                        clonedBoard[newRowTemp][newColumnTemp] = 0; // Remove a peça capturada
-                    }
-                }
-            }
-        }
-
         return clonedBoard;
     }
 
@@ -144,7 +121,7 @@ function createGameInstance(gameContainerId) {
     function getBestMove(board, player) {
         let bestMove = null;
         let bestScore = -Infinity;
-        let depth = 5;
+        let depth = 1;
 
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
@@ -273,7 +250,6 @@ function createGameInstance(gameContainerId) {
         var row = parseInt(cell.getAttribute("row"));
         var column = parseInt(cell.getAttribute("column"));
 
-
         if (
             (cell.classList.contains("blackPiece") && currentPlayer === 1) ||
             (cell.classList.contains("blackQueenPiece") && currentPlayer === 1) ||
@@ -324,6 +300,7 @@ function createGameInstance(gameContainerId) {
                     checkVictory(board);
 
                     makeAIMoveR();
+
                     switchPlayer();
                 }
             }
@@ -332,6 +309,8 @@ function createGameInstance(gameContainerId) {
 
     function is_valid_move(row, column) {
         let numColumns = board[0].length;
+
+
         return row >= 0 && row < numColumns && column >= 0 && column < numColumns;
     }
 
@@ -512,15 +491,13 @@ function createGameInstance(gameContainerId) {
         }
 
         {
-            if (blackScore === 2) {
-                alert("Peça branca venceu!");
+            if (blackScore === 1) {
                 currentPlayer = 1;
-                resetGame();
+                openModal("Não foi dessa vez, a máquina te venceu...")
                 return true;
-            } else if (whiteScore === 2) {
-                alert("Peça preta venceu!");
+            } else if (whiteScore === 1) {
                 currentPlayer = 1;
-                resetGame();
+                openModal("Parabéns, você venceu a máquina!!!")
                 return true;
             } else {
                 return false; // Nenhum vencedor ainda
