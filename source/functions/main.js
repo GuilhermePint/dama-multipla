@@ -34,8 +34,28 @@ function initGame() {
 function aboutUs() {
     window.location.href = "about.html";
 }
+
+function initAboutUs() {
+    var about = document.getElementById("about");
+    setTimeout(() => {
+        about.style.opacity = '1'
+    }, 750);
+}
+
 function homePage() {
     window.location.href = "index.html";
 }
 
+var modal = document.getElementById("myModal");
+
+var modalText = document.getElementById("modal-text");
+
+function openModal(text) {
+    modalText.textContent = text;
+    modal.style.display = "block";
+}
+
+function closeModal() {
+    modal.style.display = "none";
+}
 
