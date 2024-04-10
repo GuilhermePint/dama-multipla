@@ -121,7 +121,7 @@ function createGameInstance(gameContainerId) {
     function getBestMove(board, player) {
         let bestMove = null;
         let bestScore = -Infinity;
-        let depth = 1;
+        let depth = 4;
 
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
